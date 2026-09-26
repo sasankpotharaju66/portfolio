@@ -22,10 +22,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Background Glow Accents -->
-  <div class="glow-bg glow-1" aria-hidden="true"></div>
-  <div class="glow-bg glow-2" aria-hidden="true"></div>
-  <div class="glow-bg glow-3" aria-hidden="true"></div>
+  <!-- Background Glow Accents Container (Guarantees zero overflow/shaking on mobile) -->
+  <div class="glow-wrapper" aria-hidden="true">
+    <div class="glow-bg glow-1"></div>
+    <div class="glow-bg glow-2"></div>
+    <div class="glow-bg glow-3"></div>
+  </div>
 
   <!-- Header / Navigation Bar -->
   <header class="navbar" id="navbar">

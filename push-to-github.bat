@@ -27,8 +27,8 @@ if not exist .git (
 echo [2/4] Staging all files...
 git add .
 
-echo [3/4] Committing portfolio files...
-git commit -m "Deploy Sasank Potharaju Portfolio SPA to Vercel"
+echo [3/4] Committing updates...
+git commit -m "Fix mobile screen shaking, horizontal overflow, and layout shifts"
 
 git branch -M main
 
@@ -42,20 +42,16 @@ git push -u origin main
 
 if %errorlevel% neq 0 (
     echo.
-    echo [NOTE] Push returned non-zero code. Trying push with force flag in case remote was initialized with files...
+    echo [NOTE] Push returned non-zero code. Trying push with force flag...
     git push -u origin main --force
 )
 
 if %errorlevel% equ 0 (
     echo.
     echo ======================================================================
-    echo [SUCCESS] Code successfully pushed to GitHub!
-    echo Check it here: https://github.com/sasankpotharaju66/portfolio
-    echo.
-    echo Final step: 
-    echo 1. Go to: https://vercel.com/new
-    echo 2. Click "Import" next to 'portfolio'
-    echo 3. Click "Deploy"
+    echo [SUCCESS] Fixes successfully pushed to GitHub!
+    echo Vercel will automatically re-deploy your site in ~10 seconds.
+    echo Check your live site: https://sasank-portfolio-v2.vercel.app
     echo ======================================================================
 ) else (
     echo.

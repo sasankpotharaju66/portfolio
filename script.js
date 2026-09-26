@@ -91,12 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileDrawer.classList.add('open');
       mobileToggle.classList.add('active');
       mobileToggle.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflowY = 'hidden';
     } else {
       mobileDrawer.classList.remove('open');
       mobileToggle.classList.remove('active');
       mobileToggle.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
+      document.body.style.overflowY = '';
     }
   }
 
@@ -201,14 +201,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!resumeModal) return;
     resumeModal.classList.add('open');
     resumeModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflowY = 'hidden';
   }
 
   function closeModal() {
     if (!resumeModal) return;
     resumeModal.classList.remove('open');
     resumeModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    document.body.style.overflowY = '';
   }
 
   if (openResumeBtn) openResumeBtn.addEventListener('click', openModal);
