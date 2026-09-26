@@ -239,49 +239,100 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // 8. Contact Form Handling
+  // 8. Formspree Contact Form Handling
   // --------------------------------------------------------------------------
   const contactForm = document.getElementById('contact-form');
   const formFeedback = document.getElementById('form-feedback');
+  const submitBtn = document.getElementById('contact-submit-btn');
 
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const name = document.getElementById('contact-name').value.trim();
       const email = document.getElementById('contact-email').value.trim();
       const subject = document.getElementById('contact-subject').value.trim();
       const message = document.getElementById('contact-message').value.trim();
 
       if (!name || !email || !subject || !message) {
-        if (formFeedback) {
-          formFeedback.textContent = 'Please fill out all fields before sending.';
-          formFeedback.className = 'form-feedback error';
-          formFeedback.style.display = 'block';
-        }
+        showFeedback('Please fill out all fields before sending.', 'error');
         return;
       }
 
-      // Prepare mailto link
-      const mailtoLink = `mailto:sasankpotharaju06@gmail.com?subject=${encodeURIComponent(
-        `[Portfolio] ${subject} - from ${name}`
-      )}&body=${encodeURIComponent(
-        `Hi Sasank,\n\n${message}\n\nFrom: ${name} (${email})`
-      )}`;
+      const formspreeEndpoint = contactForm.getAttribute('action');
 
-      // Feedback message
-      if (formFeedback) {
-        formFeedback.textContent = 'Message created! Launching your email client to send to Sasank...';
-        formFeedback.className = 'form-feedback success';
-        formFeedback.style.display = 'block';
+      // Check if user has replaced YOUR_FORMSPREE_ID
+      if (!formspreeEndpoint || formspreeEndpoint.includes('YOUR_FORMSPREE_ID')) {
+        showFeedback(
+          'Please configure your Formspree Form ID in index.html (or contact Sasank directly at sasankpotharaju06@gmail.com).',
+          'error'
+        );
+        return;
       }
 
-      // Trigger user's mail client
-      setTimeout(() => {
-        window.location.href = mailtoLink;
-      }, 500);
+      // Set loading state
+      setButtonLoading(true);
 
-      showToast('Opening email client to reach Sasank...');
+      try {
+        const formData = new FormData(contactForm);
+        const response = await fetch(formspreeEndpoint, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          showFeedback('Thank you, ' + name + '! Your message has been sent successfully to Sasank. I will reply soon!', 'success');
+          contactForm.reset();
+          showToast('Message sent successfully!');
+        } else {
+          const data = await response.json().catch(() => null);
+          if (data && data.errors && data.errors.length > 0) {
+            showFeedback(data.errors.map(err => err.message).join(', '), 'error');
+          } else {
+            showFeedback('Oops! There was a problem submitting your message. Please try again or email directly.', 'error');
+          }
+        }
+      } catch (err) {
+        showFeedback('Network error: Unable to reach Formspree. Please check your internet connection or email directly.', 'error');
+      } finally {
+        setButtonLoading(false);
+      }
     });
+
+    function setButtonLoading(isLoading) {
+      if (!submitBtn) return;
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnIcon = submitBtn.querySelector('.btn-icon');
+
+      if (isLoading) {
+        submitBtn.disabled = true;
+        if (btnText) btnText.textContent = 'Sending...';
+        if (btnIcon) btnIcon.style.display = 'none';
+
+        let spinner = submitBtn.querySelector('.spinner');
+        if (!spinner) {
+          spinner = document.createElement('span');
+          spinner.className = 'spinner';
+          submitBtn.prepend(spinner);
+        }
+      } else {
+        submitBtn.disabled = false;
+        if (btnText) btnText.textContent = 'Send Message';
+        if (btnIcon) btnIcon.style.display = 'inline-block';
+        const spinner = submitBtn.querySelector('.spinner');
+        if (spinner) spinner.remove();
+      }
+    }
+
+    function showFeedback(msg, type) {
+      if (!formFeedback) return;
+      formFeedback.textContent = msg;
+      formFeedback.className = `form-feedback ${type}`;
+      formFeedback.style.display = 'block';
+    }
   }
 
   // --------------------------------------------------------------------------

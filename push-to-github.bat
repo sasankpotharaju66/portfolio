@@ -28,7 +28,7 @@ echo [2/4] Staging all files...
 git add .
 
 echo [3/4] Committing updates...
-git commit -m "Fix code visibility in light theme and stabilize mobile view"
+git commit -m "Configure live Formspree endpoint mgavlbbz for contact form"
 
 git branch -M main
 
